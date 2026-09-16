@@ -19,6 +19,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { loginSchema } from "@/validation";
+import { useLogin } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 
 
@@ -114,6 +116,9 @@ export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
+    const router = useRouter()
+    const { mutate: login, isPending } = useLogin()
+
     const form = useForm({
         defaultValues: {
             email: "",
@@ -125,10 +130,19 @@ export function LoginForm({
         },
 
         onSubmit: async ({ value }) => {
-            console.log(value);
+            const loginData = {
+                email: value.email,
+                password: value.password
+            }
 
-            // TODO: replace with the real login API call
-            // await login(value);
+            login(loginData, {
+                onSuccess: (res) => {
+                    router.push("/")
+                },
+                onError: (err) => {
+                    console.log(err)
+                }
+            })
         },
     });
 
