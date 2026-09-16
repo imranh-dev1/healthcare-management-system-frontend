@@ -21,6 +21,8 @@ import { cn } from "@/lib/utils";
 import { loginSchema } from "@/validation";
 import { useLogin } from "@/hooks";
 import { useRouter } from "next/navigation";
+import { Spinner } from "../ui/spinner";
+import { toast } from "sonner";
 
 
 
@@ -137,10 +139,12 @@ export function LoginForm({
 
             login(loginData, {
                 onSuccess: (res) => {
+                    toast.success(res.message || "Login successful");
                     router.push("/")
                 },
                 onError: (err) => {
-                    console.log(err)
+                    toast.error("Something went wrong. Please try again.");
+                    // console.log("Errorr", err)
                 }
             })
         },
@@ -242,20 +246,14 @@ export function LoginForm({
 
                             <Field>
                                 <form.Subscribe
-                                    selector={(state) => [
-                                        state.canSubmit,
-                                        state.isSubmitting,
-                                    ]}
-                                    children={([canSubmit, isSubmitting]) => (
+                                    children={() => (
                                         <Button
                                             type="submit"
                                             className="w-full"
-                                            disabled={
-                                                !canSubmit || isSubmitting
-                                            }
+                                            disabled={isPending}
                                         >
-                                            {isSubmitting
-                                                ? "Logging in..."
+                                            {isPending
+                                                ? <><Spinner /> Logging in...</>
                                                 : "Login"}
                                         </Button>
                                     )}
