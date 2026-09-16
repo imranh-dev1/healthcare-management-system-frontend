@@ -31,6 +31,8 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import logo from "@/assest/logo.png"
 
 type UserRole = "SUPER_ADMIN" | "ADMIN" | "DOCTOR" | "PATIENT";
 
@@ -209,9 +211,7 @@ export function Header({ user = null }: HeaderProps) {
                     className="group flex items-center gap-2.5"
                     aria-label="MediCare home"
                 >
-                    <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm transition-transform group-hover:scale-105">
-                        <HeartPulse className="size-5" strokeWidth={2.5} />
-                    </div>
+                    <Image width={50} src={logo} alt="Logo" />
 
                     <div className="hidden sm:block">
                         <span
@@ -272,7 +272,7 @@ export function Header({ user = null }: HeaderProps) {
                                 variant="ghost"
                                 className={cn(
                                     transparent &&
-                                        "text-white hover:bg-white/10 hover:text-white",
+                                    "text-white hover:bg-white/10 hover:text-white",
                                 )}
                                 asChild
                             >
@@ -301,7 +301,7 @@ export function Header({ user = null }: HeaderProps) {
                             className={cn(
                                 "md:hidden",
                                 transparent &&
-                                    "text-white hover:bg-white/10 hover:text-white",
+                                "text-white hover:bg-white/10 hover:text-white",
                             )}
                             aria-label="Open navigation menu"
                         >
