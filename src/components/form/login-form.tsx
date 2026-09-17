@@ -19,10 +19,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { loginSchema } from "@/validation";
-import { useLogin } from "@/hooks";
+import { useGoogleAuthLogin, useLogin } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
+import { CredentialResponse } from "@react-oauth/google";
+import { GoogleLoginComponet } from "../auth/googleLogin";
 
 
 
@@ -97,30 +99,12 @@ function FormControl({
     );
 }
 
-
-function GoogleIcon({ className }: { className?: string }) {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            className={className}
-            aria-hidden="true"
-        >
-            <path
-                d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
-                fill="currentColor"
-            />
-        </svg>
-    );
-}
-
 export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
     const router = useRouter()
     const { mutate: login, isPending } = useLogin()
-
     const form = useForm({
         defaultValues: {
             email: "",
@@ -144,7 +128,6 @@ export function LoginForm({
                 },
                 onError: (err) => {
                     toast.error("Something went wrong. Please try again.");
-                    // console.log("Errorr", err)
                 }
             })
         },
@@ -175,7 +158,8 @@ export function LoginForm({
 
                             <form.Field
                                 name="email"
-                                children={(field) => {
+                            >
+                                {(field) => {
                                     const isInvalid = isFieldInvalid(field);
 
                                     return (
@@ -203,11 +187,12 @@ export function LoginForm({
                                         </FormControl>
                                     );
                                 }}
-                            />
+                            </form.Field>
 
                             <form.Field
                                 name="password"
-                                children={(field) => {
+                            >
+                                {(field) => {
                                     const isInvalid = isFieldInvalid(field);
 
                                     return (
@@ -242,11 +227,11 @@ export function LoginForm({
                                         </FormControl>
                                     );
                                 }}
-                            />
+                            </form.Field>
 
                             <Field>
-                                <form.Subscribe
-                                    children={() => (
+                                <form.Subscribe>
+                                    {() => (
                                         <Button
                                             type="submit"
                                             className="w-full"
@@ -257,23 +242,14 @@ export function LoginForm({
                                                 : "Login"}
                                         </Button>
                                     )}
-                                />
+                                </form.Subscribe>
                             </Field>
 
                             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                                 Or continue with
                             </FieldSeparator>
 
-                            <Field className="grid gap-4">
-                                <Button
-                                    variant="outline"
-                                    type="button"
-                                    className="w-full"
-                                >
-                                    <GoogleIcon className="size-4" />
-                                    Continue with Google
-                                </Button>
-                            </Field>
+                            <GoogleLoginComponet />
 
                             <FieldDescription className="text-center">
                                 Don&apos;t have an account?{" "}

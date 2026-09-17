@@ -9,3 +9,23 @@ export const loginSchema = z.object({
 
     password: z.string().min(1, "Password is required"),
 });
+
+
+export const registerSchema = z.object({
+    name: z.string().min(1, "Name is required").min(2, "Name must be at least 2 characters long"),
+    email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
+    contactNumber: z.string(),
+    address: z.string(),
+    password: z
+        .string()
+        .regex(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character"),
+
+    confirmPassword: z.string().regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character"),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match", path: ["confirmPassword"],
+});
+
