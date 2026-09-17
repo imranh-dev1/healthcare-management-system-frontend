@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import logo from "@/assest/logo.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,9 +32,10 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet";
+import { useGetMe, useLogOut } from "@/hooks";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-import logo from "@/assest/logo.png"
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 type UserRole = "SUPER_ADMIN" | "ADMIN" | "DOCTOR" | "PATIENT";
 
@@ -44,9 +47,6 @@ interface CurrentUser {
     profileImage?: string | null;
 }
 
-interface HeaderProps {
-    user?: CurrentUser | null;
-}
 
 const publicNavigation = [
     {
@@ -109,7 +109,9 @@ const adminNavigation = [
 ];
 
 function getNavigation(user?: CurrentUser | null) {
-    if (!user) return publicNavigation;
+    if (!user) {
+        return publicNavigation;
+    }
 
     switch (user.role) {
         case "PATIENT":
@@ -144,7 +146,11 @@ function getDashboardPath(role: UserRole) {
     }
 }
 
-function getInitials(name: string) {
+function getInitials(name?: string | null) {
+    if (!name?.trim()) {
+        return "U";
+    }
+
     return name
         .trim()
         .split(/\s+/)
@@ -161,32 +167,51 @@ function isActiveRoute(pathname: string, href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function Header({ user = null }: HeaderProps) {
+export function Header() {
     const pathname = usePathname();
     const router = useRouter();
 
     const [mobileOpen, setMobileOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
-    useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 8);
+    const { data: response, isLoading } = useGetMe();
+    const { mutate: logout } = useLogOut();
+    const queryClient = useQueryClient()
 
-        handleScroll();
-        window.addEventListener("scroll", handleScroll, { passive: true });
+    const currentUser: CurrentUser | null = response?.data ?? null;
 
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
-    const navigation = getNavigation(user);
+    const navigation = getNavigation(currentUser);
 
     const isHome = pathname === "/";
     const transparent = isHome && !scrolled;
 
-    const handleLogout = async () => {
-        // await logout();
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 8);
+        };
 
-        router.replace("/login");
-        router.refresh();
+        handleScroll();
+
+        window.addEventListener("scroll", handleScroll, {
+            passive: true,
+        });
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
+
+    const handleLogout = () => {
+        logout(undefined, {
+            onSuccess: () => {
+                router.replace("/");
+                router.refresh();
+                toast.success("User Logout Succesfully") 
+                queryClient.removeQueries({
+                    queryKey: ["user"]
+                })
+            },
+        });
     };
 
     const handleNavigation = (href: string) => {
@@ -211,7 +236,13 @@ export function Header({ user = null }: HeaderProps) {
                     className="group flex items-center gap-2.5"
                     aria-label="MediCare home"
                 >
-                    <Image width={50} src={logo} alt="Logo" />
+                    <Image
+                        src={logo}
+                        alt="MediCare logo"
+                        width={50}
+                        height={50}
+                        priority
+                    />
 
                     <div className="hidden sm:block">
                         <span
@@ -222,10 +253,13 @@ export function Header({ user = null }: HeaderProps) {
                         >
                             MediCare
                         </span>
+
                         <span
                             className={cn(
                                 "ml-1 text-xs font-medium",
-                                transparent ? "text-white/75" : "text-muted-foreground",
+                                transparent
+                                    ? "text-white/75"
+                                    : "text-muted-foreground",
                             )}
                         >
                             Health
@@ -266,7 +300,9 @@ export function Header({ user = null }: HeaderProps) {
 
                 {/* Desktop Actions */}
                 <div className="hidden items-center gap-2 md:flex">
-                    {!user ? (
+                    {isLoading ? (
+                        <div className="h-9 w-24 animate-pulse rounded-md bg-muted/50" />
+                    ) : !currentUser ? (
                         <>
                             <Button
                                 variant="ghost"
@@ -285,7 +321,7 @@ export function Header({ user = null }: HeaderProps) {
                         </>
                     ) : (
                         <UserMenu
-                            user={user}
+                            user={currentUser}
                             onLogout={handleLogout}
                             light={transparent}
                         />
@@ -293,7 +329,10 @@ export function Header({ user = null }: HeaderProps) {
                 </div>
 
                 {/* Mobile Menu */}
-                <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+                <Sheet
+                    open={mobileOpen}
+                    onOpenChange={setMobileOpen}
+                >
                     <SheetTrigger asChild>
                         <Button
                             variant="ghost"
@@ -324,43 +363,56 @@ export function Header({ user = null }: HeaderProps) {
                         </SheetHeader>
 
                         <div className="flex flex-1 flex-col px-4 py-5">
-                            {/* Mobile user information */}
-                            {user && (
+                            {/* Mobile User */}
+                            {currentUser && (
                                 <div className="mb-5 flex items-center gap-3 rounded-xl bg-muted/60 p-3">
                                     <Avatar className="size-10">
                                         <AvatarImage
-                                            src={user.profileImage ?? undefined}
-                                            alt={user.name}
+                                            src={
+                                                currentUser.profileImage ??
+                                                undefined
+                                            }
+                                            alt={currentUser.name}
                                         />
+
                                         <AvatarFallback>
-                                            {getInitials(user.name)}
+                                            {getInitials(currentUser.name)}
                                         </AvatarFallback>
                                     </Avatar>
 
                                     <div className="min-w-0">
                                         <p className="truncate text-sm font-semibold">
-                                            {user.name}
+                                            {currentUser.name}
                                         </p>
+
                                         <p className="truncate text-xs text-muted-foreground">
-                                            {user.email}
+                                            {currentUser.email}
                                         </p>
                                     </div>
                                 </div>
                             )}
 
+                            {/* Mobile Navigation */}
                             <nav
                                 className="flex flex-col gap-1"
                                 aria-label="Mobile navigation"
                             >
                                 {navigation.map((item) => {
-                                    const Icon = "icon" in item ? item.icon : null;
-                                    const active = isActiveRoute(pathname, item.href);
+                                    const Icon =
+                                        "icon" in item ? item.icon : null;
+
+                                    const active = isActiveRoute(
+                                        pathname,
+                                        item.href,
+                                    );
 
                                     return (
                                         <button
                                             key={item.href}
                                             type="button"
-                                            onClick={() => handleNavigation(item.href)}
+                                            onClick={() =>
+                                                handleNavigation(item.href)
+                                            }
                                             className={cn(
                                                 "flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium transition-colors",
                                                 active
@@ -368,17 +420,25 @@ export function Header({ user = null }: HeaderProps) {
                                                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
                                             )}
                                         >
-                                            {Icon && <Icon className="size-4" />}
+                                            {Icon && (
+                                                <Icon className="size-4" />
+                                            )}
+
                                             {item.label}
                                         </button>
                                     );
                                 })}
 
-                                {user && (
+                                {/* Dashboard */}
+                                {currentUser && (
                                     <button
                                         type="button"
                                         onClick={() =>
-                                            handleNavigation(getDashboardPath(user.role))
+                                            handleNavigation(
+                                                getDashboardPath(
+                                                    currentUser.role,
+                                                ),
+                                            )
                                         }
                                         className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                                     >
@@ -388,20 +448,25 @@ export function Header({ user = null }: HeaderProps) {
                                 )}
                             </nav>
 
+                            {/* Mobile Actions */}
                             <div className="mt-auto border-t pt-5">
-                                {!user ? (
+                                {!currentUser ? (
                                     <div className="flex flex-col gap-2">
                                         <Button
                                             variant="outline"
                                             className="w-full"
-                                            onClick={() => handleNavigation("/login")}
+                                            onClick={() =>
+                                                handleNavigation("/login")
+                                            }
                                         >
                                             Log in
                                         </Button>
 
                                         <Button
                                             className="w-full"
-                                            onClick={() => handleNavigation("/register")}
+                                            onClick={() =>
+                                                handleNavigation("/register")
+                                            }
                                         >
                                             Get Started
                                         </Button>
@@ -425,9 +490,6 @@ export function Header({ user = null }: HeaderProps) {
     );
 }
 
-/* -------------------------------------------------------------------------- */
-/* User Menu                                                                  */
-/* -------------------------------------------------------------------------- */
 
 interface UserMenuProps {
     user: CurrentUser;
@@ -435,7 +497,11 @@ interface UserMenuProps {
     light?: boolean;
 }
 
-function UserMenu({ user, onLogout, light = false }: UserMenuProps) {
+function UserMenu({
+    user,
+    onLogout,
+    light = false,
+}: UserMenuProps) {
     const router = useRouter();
 
     const dashboardPath = getDashboardPath(user.role);
@@ -455,7 +521,10 @@ function UserMenu({ user, onLogout, light = false }: UserMenuProps) {
                             src={user.profileImage ?? undefined}
                             alt={user.name}
                         />
-                        <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+
+                        <AvatarFallback>
+                            {getInitials(user.name)}
+                        </AvatarFallback>
                     </Avatar>
 
                     <div className="hidden max-w-30 text-left lg:block">
@@ -467,37 +536,54 @@ function UserMenu({ user, onLogout, light = false }: UserMenuProps) {
                         >
                             {user.name}
                         </p>
+
                         <p
                             className={cn(
                                 "truncate text-xs capitalize",
-                                light ? "text-white/75" : "text-muted-foreground",
+                                light
+                                    ? "text-white/75"
+                                    : "text-muted-foreground",
                             )}
                         >
-                            {user.role.toLowerCase().replace("_", " ")}
+                            {user.role
+                                .toLowerCase()
+                                .replace("_", " ")}
                         </p>
                     </div>
 
                     <ChevronDown
                         className={cn(
                             "size-4",
-                            light ? "text-white/75" : "text-muted-foreground",
+                            light
+                                ? "text-white/75"
+                                : "text-muted-foreground",
                         )}
                     />
                 </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent
+                align="end"
+                className="w-56"
+            >
+                {/* User Info */}
                 <div className="flex items-center gap-3 px-2 py-2">
                     <Avatar className="size-9">
                         <AvatarImage
                             src={user.profileImage ?? undefined}
                             alt={user.name}
                         />
-                        <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+
+                        <AvatarFallback>
+                            {getInitials(user.name)}
+                        </AvatarFallback>
                     </Avatar>
 
                     <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold">{user.name}</p>
+                        <p className="truncate text-sm font-semibold">
+                            {user.name}
+                        </p>
+
                         <p className="truncate text-xs text-muted-foreground">
                             {user.email}
                         </p>
@@ -506,18 +592,25 @@ function UserMenu({ user, onLogout, light = false }: UserMenuProps) {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem onClick={() => router.push(dashboardPath)}>
+                {/* Dashboard */}
+                <DropdownMenuItem
+                    onClick={() => router.push(dashboardPath)}
+                >
                     <LayoutDashboard className="mr-2 size-4" />
                     Dashboard
                 </DropdownMenuItem>
 
-                <DropdownMenuItem onClick={() => router.push("/profile")}>
+                {/* Profile */}
+                <DropdownMenuItem
+                    onClick={() => router.push("/profile")}
+                >
                     <User className="mr-2 size-4" />
                     My Profile
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
 
+                {/* Logout */}
                 <DropdownMenuItem
                     onClick={onLogout}
                     className="text-destructive focus:text-destructive"
@@ -528,4 +621,4 @@ function UserMenu({ user, onLogout, light = false }: UserMenuProps) {
             </DropdownMenuContent>
         </DropdownMenu>
     );
-}
+} 
