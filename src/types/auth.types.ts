@@ -8,3 +8,8 @@ export interface IRegisterPatientPayload {
         address?: string;
     };
 }
+
+export interface IVerifyAccountPayload {
+    email: string;
+    otp: string;
+}

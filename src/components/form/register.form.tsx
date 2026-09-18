@@ -47,11 +47,11 @@ export function RegisterForm({
     const form = useForm({
         defaultValues: {
             name: "",
-            email: "imranme.global@gmail.com",
+            email: "",
             contactNumber: "",
             address: "",
-            password: "@Password0",
-            confirmPassword: "@Password0",
+            password: "",
+            confirmPassword: "",
         },
 
         validators: {
@@ -271,7 +271,8 @@ export function RegisterForm({
                                 <Field className="grid grid-cols-2 gap-4">
                                     <form.Field
                                         name="password"
-                                        children={(field) => {
+                                    >
+                                        {(field) => {
                                             const hasError =
                                                 field.state.meta.isTouched &&
                                                 field.state.meta.errors.length > 0;
@@ -299,10 +300,11 @@ export function RegisterForm({
                                                 </Field>
                                             );
                                         }}
-                                    />
+                                    </form.Field>
                                     <form.Field
                                         name="confirmPassword"
-                                        children={(field) => {
+                                    >
+                                        {(field) => {
                                             const hasError =
                                                 field.state.meta.isTouched &&
                                                 field.state.meta.errors.length > 0;
@@ -330,7 +332,7 @@ export function RegisterForm({
                                                 </Field>
                                             );
                                         }}
-                                    />
+                                    </form.Field>
                                 </Field>
                                 <FieldDescription>
                                     Must be at least 8 characters long.
@@ -373,8 +375,8 @@ export function RegisterForm({
 
             <FieldDescription className="px-6 text-center">
                 By clicking continue, you agree to our{" "}
-                <a href="#">Terms of Service</a>{" "}
-                and <a href="#">Privacy Policy</a>.
+                <a href="/terms-of-service">Terms of Service</a>{" "}
+                and <a href="/privacy-policy">Privacy Policy</a>.
             </FieldDescription>
         </div>
     );
