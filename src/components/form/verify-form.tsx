@@ -27,6 +27,7 @@ import { verifyAccountSchema } from "@/validation";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp";
 import { useVerifyAccount } from "@/hooks";
 import { Spinner } from "../ui/spinner";
+import { useEffect, useState } from "react";
 
 interface VerifyAccountProps extends React.ComponentProps<"div"> { }
 
@@ -36,6 +37,25 @@ export function VerifyAccountForm({
 }: VerifyAccountProps) {
     const router = useRouter();
     const params = useSearchParams()
+    const [countdown, setCountdown] = useState(300);
+
+    useEffect(() => {
+        if (countdown <= 0) return;
+
+        const timer = setInterval(() => {
+            setCountdown((prev) => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [countdown]);
+
+    const formatTime = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+
+        return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+    };
+
 
     const createEmail = params.get("email");
     const { mutate: verify, isPending } = useVerifyAccount()
@@ -215,20 +235,27 @@ export function VerifyAccountForm({
                                 )}
                             </form.Subscribe>
 
-                            {/* Resend OTP */}
                             <FieldDescription className="text-center">
                                 Didn&apos;t receive the code?{" "}
-                                <button
-                                    type="button"
-                                    className="font-medium underline underline-offset-4 hover:text-primary"
-                                    onClick={() => {
-                                        toast.info(
-                                            "Resend OTP functionality coming soon."
-                                        );
-                                    }}
-                                >
-                                    Resend OTP
-                                </button>
+
+                                {countdown > 0 ? (
+                                    <span className="font-medium">
+                                        Resend OTP in {formatTime(countdown)}
+                                    </span>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        className="font-medium underline underline-offset-4 hover:text-primary"
+                                        onClick={() => {
+                                            toast.info("Resend OTP functionality coming soon.");
+
+                                            setCountdown(300);
+
+                                        }}
+                                    >
+                                        Resend OTP
+                                    </button>
+                                )}
                             </FieldDescription>
 
                             {/* Login */}

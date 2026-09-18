@@ -19,12 +19,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { loginSchema } from "@/validation";
-import { useGoogleAuthLogin, useLogin } from "@/hooks";
+import { useLogin } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
-import { CredentialResponse } from "@react-oauth/google";
 import { GoogleLoginComponet } from "../auth/googleLogin";
+import Image from "next/image";
 
 
 
@@ -269,6 +269,14 @@ export function LoginForm({
                             src="/login-image.jpg"
                             alt="Healthcare"
                             className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.7]"
+                        />
+                        + <Image
+                            src="/login-image.jpg"
+                            alt="Healthcare"
+                            fill
+                            priority
+                            sizes="full"
+                            className="object-cover dark:brightness-[0.7]"
                         />
                     </div>
                 </CardContent>
