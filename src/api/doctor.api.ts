@@ -1,5 +1,5 @@
 import apiClint from "@/lib/apiClint";
-import { ApplyAsDoctorApplicationPayload, IDoctorEmailVerify } from "@/types/doctor.types";
+import { ApplyAsDoctorApplicationPayload, IDoctorEmailVerify } from "@/types";
 
 export function applyAsDoctor(payload: ApplyAsDoctorApplicationPayload) {
     const formData = new FormData()

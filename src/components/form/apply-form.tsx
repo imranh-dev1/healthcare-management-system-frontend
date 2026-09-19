@@ -97,7 +97,7 @@ export function ApplyForm() {
 
                     toast.success(res.message || "Application submitted successfully.");
                 },
-                onError: (err) => {
+                onError: (err: any) => {
                     toast.error("Something went wrong. Please try again.");
                 }
             })
