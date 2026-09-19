@@ -69,7 +69,6 @@ export function DashboardSidebar({ Role }: { Role: UserRole }) {
                 </Link>
             </SidebarHeader>
             <SidebarContent>
-                {/* We create a SidebarGroup for each parent. */}
                 {routes?.map((item) => (
                     <SidebarGroup key={item.title}>
                         <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
@@ -78,7 +77,7 @@ export function DashboardSidebar({ Role }: { Role: UserRole }) {
                                 {item.items.map((item) => (
                                     <SidebarMenuItem key={item.title}>
                                         <SidebarMenuButton asChild isActive={item.url === pathname}>
-                                            <a href={item.url}>{item.title}</a>
+                                            <Link href={item.url}>{item.title}</Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 ))}
