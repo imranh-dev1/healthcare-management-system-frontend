@@ -1,4 +1,25 @@
-import z from "zod";
+import { z } from "zod";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
+const ACCEPTED_FILE_TYPES = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "image/png",
+    "image/jpeg",
+];
+
+const fileSchema = z
+    .instanceof(File)
+    .refine(
+        (file) => file.size <= MAX_FILE_SIZE,
+        "File size must not exceed 5 MB."
+    )
+    .refine(
+        (file) => ACCEPTED_FILE_TYPES.includes(file.type),
+        "Only PDF, DOC, DOCX, PNG, and JPG files are accepted."
+    );
 
 export const ApplyingAsDoctorValidationSchema = z.object({
     user: z.object({
@@ -59,11 +80,18 @@ export const ApplyingAsDoctorValidationSchema = z.object({
             .trim()
             .regex(
                 /^(?:\+8801|01)[3-9]\d{8}$/,
-                "Please provide a valid Bangladesh contact number."
+                "Invalid Bangladeshi phone number."
             ),
 
-        resume: z
-            .instanceof(File, { message: "Please upload your resume." })
-            .nullable(),
+        resume: fileSchema
+            .nullable()
+            .refine(
+                (file) => file !== null,
+                "Resume is required."
+            ),
+
+        additionalFiles: z
+            .array(fileSchema)
+            .max(5, "You can upload a maximum of 5 files."),
     }),
 });

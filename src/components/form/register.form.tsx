@@ -367,6 +367,7 @@ export function RegisterForm({
                         <Image
                             src={registerImg}
                             alt="Image"
+                            loading="eager"
                             className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
                         />
                     </div>

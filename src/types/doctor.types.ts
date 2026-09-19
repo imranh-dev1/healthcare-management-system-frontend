@@ -1,4 +1,4 @@
-export interface ApplyDoctorFormValues {
+export interface ApplyDoctorApplicationData {
     user: {
         name: string;
         email: string;
@@ -16,4 +16,9 @@ export interface ApplyDoctorFormValues {
     };
 };
 
+export interface ApplyAsDoctorApplicationPayload {
+    resume: File;
+    additionalFiles: File[];
+    data: ApplyDoctorApplicationData
+}
 
