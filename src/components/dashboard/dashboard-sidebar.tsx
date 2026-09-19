@@ -1,4 +1,5 @@
-import * as React from "react"
+"use client"
+
 import {
     Sidebar,
     SidebarContent,
@@ -15,143 +16,23 @@ import Link from "next/link"
 import Image from "next/image"
 import logo from "@/assest/logo.png";
 import { cn } from "cn";
+import { ADMIN_ROUTES, DOCTOR_ROUTES, PATIENT_ROUTES, SUPER_ADMIN_ROUTES } from "@/routes";
+import { UserRole } from "@/types";
+import { usePathname } from "next/navigation";
 
-
-// This is sample data.
-const data = {
-    versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
-    navMain: [
-        {
-            title: "Getting Started",
-            url: "#",
-            items: [
-                {
-                    title: "Installation",
-                    url: "#",
-                },
-                {
-                    title: "Project Structure",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Build Your Application",
-            url: "#",
-            items: [
-                {
-                    title: "Routing",
-                    url: "#",
-                },
-                {
-                    title: "Data Fetching",
-                    url: "#",
-                    isActive: true,
-                },
-                {
-                    title: "Rendering",
-                    url: "#",
-                },
-                {
-                    title: "Caching",
-                    url: "#",
-                },
-                {
-                    title: "Styling",
-                    url: "#",
-                },
-                {
-                    title: "Optimizing",
-                    url: "#",
-                },
-                {
-                    title: "Configuring",
-                    url: "#",
-                },
-                {
-                    title: "Testing",
-                    url: "#",
-                },
-                {
-                    title: "Authentication",
-                    url: "#",
-                },
-                {
-                    title: "Deploying",
-                    url: "#",
-                },
-                {
-                    title: "Upgrading",
-                    url: "#",
-                },
-                {
-                    title: "Examples",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "API Reference",
-            url: "#",
-            items: [
-                {
-                    title: "Components",
-                    url: "#",
-                },
-                {
-                    title: "File Conventions",
-                    url: "#",
-                },
-                {
-                    title: "Functions",
-                    url: "#",
-                },
-                {
-                    title: "next.config.js Options",
-                    url: "#",
-                },
-                {
-                    title: "CLI",
-                    url: "#",
-                },
-                {
-                    title: "Edge Runtime",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Architecture",
-            url: "#",
-            items: [
-                {
-                    title: "Accessibility",
-                    url: "#",
-                },
-                {
-                    title: "Fast Refresh",
-                    url: "#",
-                },
-                {
-                    title: "Next.js Compiler",
-                    url: "#",
-                },
-                {
-                    title: "Supported Browsers",
-                    url: "#",
-                },
-                {
-                    title: "Turbopack",
-                    url: "#",
-                },
-            ],
-        },
-    ],
+const sidebarRoutes = {
+    SUPER_ADMIN: SUPER_ADMIN_ROUTES,
+    ADMIN: ADMIN_ROUTES,
+    DOCTOR: DOCTOR_ROUTES,
+    PATIENT: PATIENT_ROUTES
 }
 
-export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function DashboardSidebar({ Role }: { Role: UserRole }) {
+
+    const routes = sidebarRoutes[Role]
+    const pathname = usePathname()
     return (
-        <Sidebar {...props}>
+        <Sidebar>
             <SidebarHeader>
                 <Link
                     href="/"
@@ -189,14 +70,14 @@ export function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sideb
             </SidebarHeader>
             <SidebarContent>
                 {/* We create a SidebarGroup for each parent. */}
-                {data.navMain.map((item) => (
+                {routes?.map((item) => (
                     <SidebarGroup key={item.title}>
                         <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {item.items.map((item) => (
                                     <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton asChild isActive={item.isActive}>
+                                        <SidebarMenuButton asChild isActive={item.url === pathname}>
                                             <a href={item.url}>{item.title}</a>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
