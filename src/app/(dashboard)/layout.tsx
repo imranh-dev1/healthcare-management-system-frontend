@@ -2,6 +2,6 @@ import type { ReactNode } from "react"
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
     return (
-        <div>{children}</div>
+        <div>Genaral Dash{children}</div>
     )
 }

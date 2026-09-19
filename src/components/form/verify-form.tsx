@@ -25,16 +25,13 @@ import { Input } from "@/components/ui/input";
 import { IVerifyAccountPayload } from "@/types";
 import { verifyAccountSchema } from "@/validation";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp";
-import { useVerifyAccount } from "@/hooks";
+import { useDoctorVerifyAccount, useVerifyAccount } from "@/hooks";
 import { Spinner } from "../ui/spinner";
 import { useEffect, useState } from "react";
 
-interface VerifyAccountProps extends React.ComponentProps<"div"> { }
 
-export function VerifyAccountForm({
-    className,
-    ...props
-}: VerifyAccountProps) {
+
+export function VerifyAccountForm({ mode = "patient" }: { mode: "doctor" | "patient" }) {
     const router = useRouter();
     const params = useSearchParams()
     const [countdown, setCountdown] = useState(300);
@@ -56,15 +53,13 @@ export function VerifyAccountForm({
         return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
     };
 
-
     const createEmail = params.get("email");
-    const { mutate: verify, isPending } = useVerifyAccount()
 
-    if (!createEmail) {
-        toast.error("Emial Not Found, Please create a Account and try again.");
-        router.push("/register")
-        return null
-    }
+    const { mutate: verifyPatient, isPending: patientIsPending } = useVerifyAccount()
+    const { mutate: verifyDoctor, isPending: doctorIsPending } = useDoctorVerifyAccount()
+
+    const isPending = mode === "doctor" ? doctorIsPending : patientIsPending;
+    const verify = mode === "doctor" ? verifyDoctor : verifyPatient;
 
     const form = useForm({
         defaultValues: {
@@ -88,6 +83,13 @@ export function VerifyAccountForm({
                     if (!res.success) {
                         toast.error("Something Won't Wrong. Please try again.");
                     }
+                    console.log(res);
+                    if (mode === "doctor") {
+                        toast.success(res?.message || "Doctor account verified successfully! Please wait for admin approval.");
+                        
+                        router.push("/")
+                        return;
+                    }
                     toast.success(res?.message || "Account verified successfully!");
                     router.push("/")
                 },
@@ -98,11 +100,18 @@ export function VerifyAccountForm({
         },
     });
 
+    useEffect(() => {
+        if (!createEmail) {
+            toast.error("Email not found. Please create an account and try again.");
+            router.push("/");
+        }
+    }, [createEmail, router]);
+
+    if (!createEmail) return null;
+
     return (
         <div
-            className={cn("w-full", className)}
-            {...props}
-        >
+            className={cn("w-full")} >
             <Card className="w-full">
                 <CardHeader className="text-center">
                     <CardTitle className="text-2xl">

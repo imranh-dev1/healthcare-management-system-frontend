@@ -25,6 +25,7 @@ import { cn } from "cn";
 import { FileText, Upload, X } from "lucide-react";
 import { ApplyingAsDoctorValidationSchema } from "@/validation";
 import { useApplyAsDoctor } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 function isFieldInvalid(field: {
     state: {
@@ -38,8 +39,9 @@ function isFieldInvalid(field: {
 }
 
 export function ApplyForm() {
-    const { mutate: applyDoctor, isPending } = useApplyAsDoctor()
 
+    const router = useRouter()
+    const { mutate: applyDoctor, isPending } = useApplyAsDoctor()
     const form = useForm({
         defaultValues: {
             user: {
@@ -87,7 +89,11 @@ export function ApplyForm() {
 
             applyDoctor({ data: applyPayload, resume: value.doctor.resume!, additionalFiles: value.doctor.additionalFiles }, {
                 onSuccess: (res) => {
-                    console.log(res);
+                    if (!res.success) {
+                        toast.error("Something Won't Work. Please try again.");
+                    }
+                    const params = new URLSearchParams({ email: applyPayload.user.email })
+                    router.push(`/apply/verify-account?${params.toString()}`);
 
                     toast.success(res.message || "Application submitted successfully.");
                 },

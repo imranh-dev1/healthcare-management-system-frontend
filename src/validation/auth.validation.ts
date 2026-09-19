@@ -38,11 +38,13 @@ export const registerSchema = z.object({
 export const verifyAccountSchema = z.object({
     email: z
         .string()
-        .min(1, "Email is required")
-        .email("Please enter a valid email address"),
+        .trim()
+        .email("Please provide a valid email address."),
 
     otp: z
         .string()
-        .length(6, "OTP must be 6 digits")
-        .regex(/^\d{6}$/, "OTP must contain only numbers"),
+        .trim()
+        .min(1, "OTP is required.")
+        .length(6, "OTP must be 6 digits.")
+        .regex(/^\d{6}$/, "OTP must contain only numbers."),
 });

@@ -22,3 +22,8 @@ export interface ApplyAsDoctorApplicationPayload {
     data: ApplyDoctorApplicationData
 }
 
+
+export interface IDoctorEmailVerify {
+    otp: string,
+    email: string
+}

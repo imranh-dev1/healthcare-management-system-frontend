@@ -8,7 +8,7 @@ export default function VerifyAccountPage() {
         <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
             <div className="w-full max-w-sm md:max-w-md">
                 <Suspense fallback={<Spinner />}>
-                    <VerifyAccountForm mode="patient"/>
+                    <VerifyAccountForm mode="doctor" />
                 </Suspense>
             </div>
         </div>
