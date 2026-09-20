@@ -23,7 +23,7 @@ import { useLogin } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
-import { GoogleLoginComponet } from "../auth/googleLogin";
+import { GoogleLoginComponet } from "../module/google-login/googleLogin";
 import Image from "next/image";
 
 

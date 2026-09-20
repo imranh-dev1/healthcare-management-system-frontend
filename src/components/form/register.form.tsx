@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useRegister } from "@/hooks";
-import { GoogleLoginComponet } from "../auth/googleLogin";
+import { GoogleLoginComponet } from "../module/google-login/googleLogin";
 import registerImg from "@/assest/auth/register.jpg"
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
