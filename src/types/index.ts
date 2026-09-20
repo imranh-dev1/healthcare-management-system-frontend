@@ -1,3 +1,4 @@
 export * from "@/types/auth.types"
 export * from "@/types/doctor.types"
 export * from "@/types/user.types"
+export * from "@/types/sidebar-types"

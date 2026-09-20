@@ -17,10 +17,10 @@ import Image from "next/image"
 import logo from "@/assest/logo.png";
 import { cn } from "cn";
 import { ADMIN_ROUTES, DOCTOR_ROUTES, PATIENT_ROUTES, SUPER_ADMIN_ROUTES } from "@/routes";
-import { UserRole } from "@/types";
+import { SidebarItems, UserRole } from "@/types";
 import { usePathname } from "next/navigation";
 
-const sidebarRoutes = {
+const sidebarRoutes: Partial<Record<UserRole, SidebarItems>> = {
     SUPER_ADMIN: SUPER_ADMIN_ROUTES,
     ADMIN: ADMIN_ROUTES,
     DOCTOR: DOCTOR_ROUTES,
