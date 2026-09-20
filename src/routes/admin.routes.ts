@@ -6,7 +6,7 @@ export const ADMIN_ROUTES = [
         items: [
             {
                 title: "Dashboard",
-                url: `${routePrefix}/dashboard`,
+                url: `${routePrefix}`,
             },
             {
                 title: "Analytics",
@@ -34,6 +34,10 @@ export const ADMIN_ROUTES = [
     {
         title: "Doctor Applications",
         items: [
+            {
+                title: "Pending Approval",
+                url: `${routePrefix}/approve-doctor`,
+            },
             {
                 title: "Pending Applications",
                 url: `${routePrefix}/doctor-applications`,

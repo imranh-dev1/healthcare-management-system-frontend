@@ -1,5 +1,9 @@
+import ApproveDoctorTabs from "@/components/module/doctor-approval/doctor-approval-tabs";
+
 export default function ApproveDoctorPage() {
     return (
-        <div>This is Approve Doctor Page</div>
+        <section className="p-5">
+            <ApproveDoctorTabs />
+        </section>
     )
 }
