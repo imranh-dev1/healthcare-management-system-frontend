@@ -17,3 +17,7 @@ export function applyAsDoctor(payload: ApplyAsDoctorApplicationPayload) {
 export function doctorVerifyAccount(payload: IDoctorEmailVerify) {
     return apiClint("/doctor/applying-as-doctor/email-verify", { method: "POST", body: payload })
 }
+
+export function getAllDoctors() {
+    return apiClint("/doctor/all-doctors", { method: "GET" })
+}
