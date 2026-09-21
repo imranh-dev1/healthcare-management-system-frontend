@@ -4,8 +4,9 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 export default function DoctorApprovalSheet() {
     return (
         <Sheet>
-            <SheetTrigger>
-                <Button variant="default">Review</Button>
+            <SheetTrigger className="border border-primary px-3 py-0.5">
+                {/* <Button variant="default">Review</Button> */}
+                Review
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>
