@@ -2,22 +2,13 @@
 
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import DoctorApprovalSheet from "./doctor-approval-sheet";
-import { useGetAllDoctors } from "@/hooks";
+import { useSuspenceGetAllDoctors } from "@/hooks";
 import { Badge } from "@/components/ui/badge";
-import { Spinner } from "@/components/ui/spinner";
 
 export default function DoctorApprovalTable() {
-    const { data, isPending } = useGetAllDoctors();
+    const { data } = useSuspenceGetAllDoctors();
 
     const doctors = data?.data || [];
-
-    console.log(doctors);
-
-
-    if (isPending) {
-        return <Spinner />
-    }
-
 
     return (
         <Table className="border">

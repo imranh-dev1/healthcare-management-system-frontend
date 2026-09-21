@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import {
     Tabs,
     TabsContent,
@@ -12,6 +12,7 @@ import { Search } from "lucide-react";
 
 import DoctorApprovalTable from "./doctor-approval-table";
 import { VerificationStatus } from "@/types";
+import DoctorApprovalTableSkeleton from "./doctor-approval-table-skeleton";
 
 const doctorActiveStatus: ["ALL" | VerificationStatus, string][] = [
     ["ALL", "All"],
@@ -59,7 +60,9 @@ export default function DoctorApprovalTabs() {
                 </div>
             </div>
 
-            <DoctorApprovalTable />
+            <Suspense fallback={<DoctorApprovalTableSkeleton />}>
+                <DoctorApprovalTable />
+            </Suspense>
         </div>
     );
 }
