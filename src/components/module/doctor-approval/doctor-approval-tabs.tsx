@@ -3,7 +3,6 @@
 import { Suspense, useState } from "react";
 import {
     Tabs,
-    TabsContent,
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs";
@@ -11,8 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
 import DoctorApprovalTable from "./doctor-approval-table";
-import { VerificationStatus } from "@/types";
 import DoctorApprovalTableSkeleton from "./doctor-approval-table-skeleton";
+
+import { DoctorParams, VerificationStatus } from "@/types";
 
 const doctorActiveStatus: ["ALL" | VerificationStatus, string][] = [
     ["ALL", "All"],
@@ -22,8 +22,23 @@ const doctorActiveStatus: ["ALL" | VerificationStatus, string][] = [
 ];
 
 export default function DoctorApprovalTabs() {
-    const [status, setStatus] = useState<"ALL" | VerificationStatus>("ALL");
+    const [status, setStatus] =
+        useState<"ALL" | VerificationStatus>("ALL");
+
     const [search, setSearch] = useState("");
+
+    const queryParams: DoctorParams = {
+        page: 1,
+        limit: 10,
+
+        ...(status !== "ALL" && {
+            verificationStatus: status,
+        }),
+
+        ...(search.trim() && {
+            searchTerm: search.trim(),
+        }),
+    };
 
     return (
         <div className="space-y-4">
@@ -31,18 +46,23 @@ export default function DoctorApprovalTabs() {
                 <Tabs
                     value={status}
                     onValueChange={(value) =>
-                        setStatus(value as "ALL" | VerificationStatus)
+                        setStatus(
+                            value as "ALL" | VerificationStatus
+                        )
                     }
                 >
                     <TabsList>
-                        {doctorActiveStatus.map(([status, label]) => (
-                            <TabsTrigger className="px-4"
-                                key={status}
-                                value={status}
-                            >
-                                {label}
-                            </TabsTrigger>
-                        ))}
+                        {doctorActiveStatus.map(
+                            ([status, label]) => (
+                                <TabsTrigger
+                                    key={status}
+                                    value={status}
+                                    className="px-4"
+                                >
+                                    {label}
+                                </TabsTrigger>
+                            )
+                        )}
                     </TabsList>
                 </Tabs>
 
@@ -54,14 +74,14 @@ export default function DoctorApprovalTabs() {
                         onChange={(event) =>
                             setSearch(event.target.value)
                         }
-                        placeholder="Search by name or email..."
+                        placeholder="Search by name, email, specialization..."
                         className="pl-9"
                     />
                 </div>
             </div>
 
             <Suspense fallback={<DoctorApprovalTableSkeleton />}>
-                <DoctorApprovalTable />
+                <DoctorApprovalTable {...queryParams} />
             </Suspense>
         </div>
     );

@@ -64,3 +64,13 @@ export interface Doctor {
     userId: string;
     user: User;
 }
+
+export interface DoctorParams {
+    searchTerm?: string;
+    specialization?: string;
+    email?: string;
+    licenseNumber?: string;
+    verificationStatus?: VerificationStatus;
+    page?: number;
+    limit?: number;
+}

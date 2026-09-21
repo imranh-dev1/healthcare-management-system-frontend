@@ -1,14 +1,29 @@
-"use client"
+"use client";
 
-import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+
+import { Badge } from "@/components/ui/badge";
 import DoctorApprovalSheet from "./doctor-approval-sheet";
 import { useSuspenceGetAllDoctors } from "@/hooks";
-import { Badge } from "@/components/ui/badge";
+import { DoctorParams } from "@/types";
 
-export default function DoctorApprovalTable() {
-    const { data } = useSuspenceGetAllDoctors();
+interface DoctorApprovalTableProps extends DoctorParams { }
 
-    const doctors = data?.data || [];
+export default function DoctorApprovalTable(
+    params: DoctorApprovalTableProps
+) {
+    const { data } = useSuspenceGetAllDoctors(params);
+
+    const doctors = data?.data;
 
     return (
         <Table className="border">
@@ -17,19 +32,21 @@ export default function DoctorApprovalTable() {
             </TableCaption>
 
             <TableHeader>
-                <TableRow className="font-bold text-sm">
+                <TableRow className="text-sm font-bold">
                     <TableHead>Doctor</TableHead>
                     <TableHead>Specialization</TableHead>
                     <TableHead>Qualification</TableHead>
                     <TableHead>Experience</TableHead>
                     <TableHead>License</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
+                    <TableHead className="text-right">
+                        Action
+                    </TableHead>
                 </TableRow>
             </TableHeader>
 
             <TableBody>
-                {doctors?.map((doctor: any) => (
+                {doctors.map((doctor: any) => (
                     <TableRow key={doctor.id}>
                         <TableCell>
                             <div className="space-y-1">
@@ -67,9 +84,11 @@ export default function DoctorApprovalTable() {
                         <TableCell>
                             <Badge
                                 variant={
-                                    doctor.verificationStatus === "PENDING"
+                                    doctor.verificationStatus ===
+                                        "PENDING"
                                         ? "secondary"
-                                        : doctor.verificationStatus === "APPROVED"
+                                        : doctor.verificationStatus ===
+                                            "APPROVED"
                                             ? "default"
                                             : "destructive"
                                 }
@@ -92,10 +111,10 @@ export default function DoctorApprovalTable() {
                     </TableCell>
 
                     <TableCell className="text-right font-medium">
-                        {doctors?.length ?? 0}
+                        {doctors.length}
                     </TableCell>
                 </TableRow>
             </TableFooter>
         </Table>
-    )
+    );
 }
