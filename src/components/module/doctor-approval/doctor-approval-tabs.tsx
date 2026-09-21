@@ -35,7 +35,7 @@ export default function DoctorApprovalTabs() {
                 >
                     <TabsList>
                         {doctorActiveStatus.map(([status, label]) => (
-                            <TabsTrigger
+                            <TabsTrigger className="px-4"
                                 key={status}
                                 value={status}
                             >
