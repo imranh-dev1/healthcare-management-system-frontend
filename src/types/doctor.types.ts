@@ -1,6 +1,6 @@
 import { User } from "./user.types";
 
-export type VerificationStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type VerificationStatus = "PENDING" | "APPROVED" | "REJECT";
 export interface AdditionalFile {
     url: string;
     publicId: string;

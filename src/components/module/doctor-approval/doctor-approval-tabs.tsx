@@ -18,26 +18,19 @@ const doctorActiveStatus: ["ALL" | VerificationStatus, string][] = [
     ["ALL", "All"],
     ["APPROVED", "Approved"],
     ["PENDING", "Pending"],
-    ["REJECTED", "Rejected"],
+    ["REJECT", "Rejected"],
 ];
 
 export default function DoctorApprovalTabs() {
-    const [status, setStatus] =
-        useState<"ALL" | VerificationStatus>("ALL");
+    const [status, setStatus] = useState<"ALL" | VerificationStatus>("ALL");
 
     const [search, setSearch] = useState("");
 
     const queryParams: DoctorParams = {
         page: 1,
         limit: 10,
-
-        ...(status !== "ALL" && {
-            verificationStatus: status,
-        }),
-
-        ...(search.trim() && {
-            searchTerm: search.trim(),
-        }),
+        ...(status !== "ALL" && { verificationStatus: status }),
+        ...(search.trim() && { searchTerm: search.trim() }),
     };
 
     return (
