@@ -1,4 +1,4 @@
-import { applyAsDoctor, doctorVerifyAccount, getAllDoctors } from "@/api";
+import { applyAsDoctor, doctorVerifyAccount, getAllDoctors, getSingleDoctor } from "@/api";
 import { DoctorParams } from "@/types";
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 
@@ -25,5 +25,13 @@ export function useSuspenceGetAllDoctors(params: DoctorParams) {
     return useSuspenseQuery({
         queryKey: ["doctors", params],
         queryFn: () => getAllDoctors(params),
+    })
+}
+
+export function useGetSingleDoctor(params: { doctorId: string }, enabled: boolean) {
+    return useQuery({
+        queryKey: ["doctor", params.doctorId],
+        queryFn: () => getSingleDoctor(params),
+        enabled
     })
 }

@@ -74,3 +74,4 @@ export interface DoctorParams {
     page?: number;
     limit?: number;
 }
+

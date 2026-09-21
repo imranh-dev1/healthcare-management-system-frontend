@@ -98,7 +98,7 @@ export default function DoctorApprovalTable(
                         </TableCell>
 
                         <TableCell className="text-right">
-                            <DoctorApprovalSheet />
+                            <DoctorApprovalSheet doctorId={doctor?.id} />
                         </TableCell>
                     </TableRow>
                 ))}

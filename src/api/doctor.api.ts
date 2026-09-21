@@ -24,3 +24,8 @@ export function getAllDoctors(params: DoctorParams) {
         method: "GET"
     })
 }
+
+export function getSingleDoctor(params: { doctorId: string }) {
+    return apiClint<ApiResponse<Doctor>>(`/doctor/admin/doctors/${params.doctorId}`, { method: "GET" });
+}
+
