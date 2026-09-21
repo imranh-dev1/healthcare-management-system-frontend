@@ -1,30 +1,65 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+"use client";
+
+import { useState } from "react";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+
 import DoctorApprovalTable from "./doctor-approval-table";
+import { VerificationStatus } from "@/types";
+
+const doctorActiveStatus: ["ALL" | VerificationStatus, string][] = [
+    ["ALL", "All"],
+    ["APPROVED", "Approved"],
+    ["PENDING", "Pending"],
+    ["REJECTED", "Rejected"],
+];
 
 export default function DoctorApprovalTabs() {
-    return (
-        <>
-            <Tabs defaultValue="pending">
-                <TabsList>
-                    <TabsTrigger value="pending">Pending</TabsTrigger>
-                    <TabsTrigger value="approved">Approved</TabsTrigger>
-                    <TabsTrigger value="rejected">Rejeced</TabsTrigger>
-                    <TabsTrigger value="all">All</TabsTrigger>
-                </TabsList>
-                <TabsContent value="pending">
-                    <DoctorApprovalTable />
-                </TabsContent>
-                <TabsContent value="approved">
-                    <DoctorApprovalTable />
-                </TabsContent>
-                <TabsContent value="rejected">
-                    <DoctorApprovalTable />
-                </TabsContent>
-                <TabsContent value="all">
-                    <DoctorApprovalTable />
-                </TabsContent>
-            </Tabs >
-        </>
+    const [status, setStatus] = useState<"ALL" | VerificationStatus>("ALL");
+    const [search, setSearch] = useState("");
 
-    )
+    return (
+        <div className="space-y-4">
+            <div className="flex items-center justify-between gap-4">
+                <Tabs
+                    value={status}
+                    onValueChange={(value) =>
+                        setStatus(value as "ALL" | VerificationStatus)
+                    }
+                >
+                    <TabsList>
+                        {doctorActiveStatus.map(([status, label]) => (
+                            <TabsTrigger
+                                key={status}
+                                value={status}
+                            >
+                                {label}
+                            </TabsTrigger>
+                        ))}
+                    </TabsList>
+                </Tabs>
+
+                <div className="relative w-full max-w-sm">
+                    <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+
+                    <Input
+                        value={search}
+                        onChange={(event) =>
+                            setSearch(event.target.value)
+                        }
+                        placeholder="Search by name or email..."
+                        className="pl-9"
+                    />
+                </div>
+            </div>
+
+            <DoctorApprovalTable />
+        </div>
+    );
 }

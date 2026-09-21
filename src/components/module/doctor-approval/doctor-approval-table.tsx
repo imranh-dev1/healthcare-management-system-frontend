@@ -26,7 +26,7 @@ export default function DoctorApprovalTable() {
             </TableCaption>
 
             <TableHeader>
-                <TableRow>
+                <TableRow className="font-bold text-sm">
                     <TableHead>Doctor</TableHead>
                     <TableHead>Specialization</TableHead>
                     <TableHead>Qualification</TableHead>
