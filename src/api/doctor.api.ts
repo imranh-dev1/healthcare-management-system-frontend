@@ -1,5 +1,5 @@
 import apiClint from "@/lib/apiClint";
-import { ApiResponse, ApplyAsDoctorApplicationPayload, Doctor, DoctorParams, IDoctorEmailVerify } from "@/types";
+import { ApiResponse, ApplyAsDoctorApplicationPayload, ApprovedDoctor, Doctor, DoctorParams, IDoctorEmailVerify } from "@/types";
 
 export function applyAsDoctor(payload: ApplyAsDoctorApplicationPayload) {
     const formData = new FormData()
@@ -29,3 +29,7 @@ export function getSingleDoctor(params: { doctorId: string }) {
     return apiClint<ApiResponse<Doctor>>(`/doctor/admin/doctors/${params.doctorId}`, { method: "GET" });
 }
 
+
+export function approvedDoctor(payload: ApprovedDoctor) {
+    return apiClint("/doctor/approved-doctor", { method: "POST", body: payload })
+}

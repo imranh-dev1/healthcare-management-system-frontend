@@ -1,4 +1,4 @@
-import { applyAsDoctor, doctorVerifyAccount, getAllDoctors, getSingleDoctor } from "@/api";
+import { applyAsDoctor, approvedDoctor, doctorVerifyAccount, getAllDoctors, getSingleDoctor } from "@/api";
 import { DoctorParams } from "@/types";
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 
@@ -33,5 +33,11 @@ export function useGetSingleDoctor(params: { doctorId: string }, enabled: boolea
         queryKey: ["doctor", params.doctorId],
         queryFn: () => getSingleDoctor(params),
         enabled
+    })
+}
+
+export function useApprovedDoctor() {
+    return useMutation({
+        mutationFn: approvedDoctor
     })
 }

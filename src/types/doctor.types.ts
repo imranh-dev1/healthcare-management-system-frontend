@@ -75,3 +75,8 @@ export interface DoctorParams {
     limit?: number;
 }
 
+export interface ApprovedDoctor {
+    verificationStatus?: "APPROVED" | "REJECT";
+    doctorId?: string;
+    rejectionReason?: string;
+}
