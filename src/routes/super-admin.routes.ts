@@ -47,14 +47,6 @@ export const SUPER_ADMIN_ROUTES = [
                 title: "Pending Applications",
                 url: `${routePrefix}/doctor-applications`,
             },
-            {
-                title: "Verified Doctors",
-                url: `${routePrefix}/doctors/verified`,
-            },
-            {
-                title: "Rejected Applications",
-                url: `${routePrefix}/doctor-applications/rejected`,
-            },
         ],
     },
     {

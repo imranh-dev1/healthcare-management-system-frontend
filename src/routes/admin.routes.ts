@@ -38,18 +38,6 @@ export const ADMIN_ROUTES = [
                 title: "Pending Approval",
                 url: `${routePrefix}/approve-doctor`,
             },
-            {
-                title: "Pending Applications",
-                url: `${routePrefix}/doctor-applications`,
-            },
-            {
-                title: "Verified Doctors",
-                url: `${routePrefix}/doctors/verified`,
-            },
-            {
-                title: "Rejected Applications",
-                url: `${routePrefix}/doctor-applications/rejected`,
-            },
         ],
     },
     {
